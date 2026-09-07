@@ -38,6 +38,7 @@ import {
   type AppSettings,
 } from "@/lib/yeet/settings";
 import { bumpJournal, todayJournal, type JournalDay } from "@/lib/yeet/journal";
+import { YEET_VERSION } from "@/lib/yeet/version";
 import {
   Body,
   Bodies,
@@ -534,12 +535,12 @@ export function YeetGame() {
     ctx.fillStyle = "#eef0f4";
     ctx.font = `600 ${Math.floor(out.width * 0.022)}px system-ui,sans-serif`;
     const s = scoreRef.current;
-    ctx.fillText(`Yeet ${s.bestYeet} · Zen ${s.zen} · Chaos ${s.chaos} · Far ${Math.round(s.farthest)}m`, 28, out.height - fh + fh * 0.55);
+    ctx.fillText(`Yeet ${s.bestYeet} / Zen ${s.zen} / Chaos ${s.chaos} / Far ${Math.round(s.farthest)}m`, 28, out.height - fh + fh * 0.55);
     ctx.fillStyle = "#8b919c";
     ctx.font = `500 ${Math.floor(out.width * 0.018)}px system-ui,sans-serif`;
-    ctx.fillText(`Challenges ${missionRef.current.completed} · Calm ${s.bestCalmStreak} · ${settingsRef.current.mode}`, 28, out.height - fh + fh * 0.78);
+    ctx.fillText(`Challenges ${missionRef.current.completed} / Calm ${s.bestCalmStreak} / ${settingsRef.current.mode}`, 28, out.height - fh + fh * 0.78);
     ctx.textAlign = "right";
-    ctx.fillText("yeet.grok.me", out.width - 28, out.height - fh + fh * 0.45);
+    ctx.fillText(`yeet.grok.me v${YEET_VERSION}`, out.width - 28, out.height - fh + fh * 0.45);
     ctx.textAlign = "left";
     setShareDataUrl(out.toDataURL("image/png"));
     setShareOpen(true);
@@ -1096,7 +1097,7 @@ export function YeetGame() {
         <div className="pointer-events-auto min-w-0 max-w-[46%] rounded-xl border border-border bg-surface/90 px-2.5 py-1.5 backdrop-blur-md sm:px-4 sm:py-2">
           <div className="flex items-baseline gap-2">
             <h1 className="text-base font-semibold tracking-tight sm:text-xl">YEET</h1>
-            <span className="hidden text-xs text-muted sm:inline">stress reliever</span>
+            <span className="hidden text-xs text-muted sm:inline">v{YEET_VERSION}</span>
           </div>
           {!compact && <p className="mt-0.5 truncate text-[10px] text-subtle sm:text-xs">{hint}</p>}
         </div>
@@ -1177,16 +1178,20 @@ export function YeetGame() {
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-bg/50 p-4">
             <div className="pointer-events-auto max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-surface px-5 py-6 text-center shadow-2xl">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">yeet.grok.me</p>
+              <p className="mt-1 font-mono text-[10px] tabular-nums text-subtle">v{YEET_VERSION}</p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight">In-Timeline stress dump</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">
                 Spawn worries, memes, slime, and glass. Slingshot them into sticky floors, ice, and bounce pads. Soft soothes; chaos thrash-clears.
               </p>
               <div className="mt-3 grid grid-cols-2 gap-2 text-left text-[11px] text-muted">
-                <div className="rounded-lg border border-border bg-surface-2 p-2"><p className="font-medium text-fg">Modes</p>Soft · Zen · Chaos · Freeplay</div>
-                <div className="rounded-lg border border-border bg-surface-2 p-2"><p className="font-medium text-fg">Toys</p>Worries · Bombs · Bubbles · Slime</div>
-                <div className="rounded-lg border border-border bg-surface-2 p-2"><p className="font-medium text-fg">Zones</p>Sticky · Ice · Bounce</div>
-                <div className="rounded-lg border border-border bg-surface-2 p-2"><p className="font-medium text-fg">Keys</p>Space yeet · F flush · arrows aim</div>
+                <div className="rounded-lg border border-border bg-surface-2 p-2"><p className="font-medium text-fg">Modes</p>Soft / Zen / Chaos / Freeplay</div>
+                <div className="rounded-lg border border-border bg-surface-2 p-2"><p className="font-medium text-fg">Toys</p>Worries / Bombs / Bubbles / Slime</div>
+                <div className="rounded-lg border border-border bg-surface-2 p-2"><p className="font-medium text-fg">Zones</p>Sticky / Ice / Bounce</div>
+                <div className="rounded-lg border border-border bg-surface-2 p-2"><p className="font-medium text-fg">Keys</p>Space yeet / F flush / arrows aim</div>
               </div>
+              <p className="mt-3 text-[11px] leading-relaxed text-subtle">
+                Scores stay on this device. No account required.
+              </p>
               {showChallenges && (
                 <p className="mt-3 rounded-lg border border-border bg-surface-2 px-3 py-2 text-left text-xs">
                   <span className="font-medium text-accent">Now: </span>{currentMission.title} - {currentMission.blurb}
@@ -1228,7 +1233,7 @@ export function YeetGame() {
             </div>
           )}
           <div className="flex items-center justify-between text-[10px] text-subtle">
-            <span>{bodyCount} objs · zen {score.zen} · today {journal.yeets} yeets</span>
+            <span>{bodyCount} objs / zen {score.zen} / today {journal.yeets} yeets</span>
             <button type="button" className="text-muted hover:text-fg" onClick={enoughForToday}>Enough for today</button>
           </div>
         </div>
@@ -1285,12 +1290,13 @@ export function YeetGame() {
                 className="w-full rounded-xl border border-border bg-surface-2 px-3 py-2 text-sm text-fg outline-none focus:border-accent" placeholder="YEET" />
             </Section>
             <Section title="Today">
-              <p className="text-xs text-muted">{journal.yeets} yeets · {journal.flushes} flushes · {journal.challenges} challenges · zen best {journal.zen}</p>
+              <p className="text-xs text-muted">{journal.yeets} yeets / {journal.flushes} flushes / {journal.challenges} challenges / zen best {journal.zen}</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <button type="button" className="rounded-xl border border-border px-3 py-2 text-xs" onClick={() => { resetWorld(); setSettingsOpen(false); }}>Reset board</button>
                 <button type="button" className="rounded-xl border border-border px-3 py-2 text-xs" onClick={() => { enoughForToday(); setSettingsOpen(false); }}>Enough for today</button>
               </div>
             </Section>
+            <p className="mt-4 text-center font-mono text-[10px] tabular-nums text-subtle">yeet.grok.me v{YEET_VERSION}</p>
           </div>
         </div>
       )}

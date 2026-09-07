@@ -12,7 +12,7 @@ import { dirname } from "node:path";
 import { chromium } from "playwright";
 
 const url = process.argv[2] || "http://127.0.0.1:8080/";
-const outPng = process.argv[3] || "/workspace/screenshots/app-builder-preview.png";
+const outPng = process.argv[3] || "/workspace/screenshots/yeet-preview.png";
 const timeoutMs = Number(process.env.BROWSER_SMOKE_TIMEOUT_MS || 45000);
 
 mkdirSync(dirname(outPng), { recursive: true });

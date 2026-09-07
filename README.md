@@ -1,6 +1,8 @@
 # YEET - yeet.grok.me
 
-In-Timeline **stress reliever**: slingshot memes, worries, slime, and glass around a 2D physics sandbox.
+**v1.0.0** - In-Timeline **stress reliever**: slingshot memes, worries, slime, and glass around a 2D physics sandbox.
+
+Play is local-first. Scores and settings stay in the browser.
 
 ## Play
 
@@ -29,3 +31,5 @@ Production target is **Vercel** (Nitro `vercel` preset). Point a custom domain a
 ## Brand
 
 Canonical URL: [https://yeet.grok.me](https://yeet.grok.me)
+
+Product version: **1.0.0** (keep `package.json` and `src/lib/yeet/version.ts` in lockstep).
