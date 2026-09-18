@@ -6,7 +6,7 @@ export type MissionDef = {
   id: MissionId;
   title: string;
   blurb: string;
-  metric: "chaos" | "farthest" | "collisions" | "lastYeet" | "airTime" | "bestYeet" | "zen" | "calmStreak" | "flushes";
+  metric: "chaos" | "farthest" | "collisions" | "lastYeet" | "airTime" | "bestYeet" | "zen" | "calmStreak" | "flushes" | "yeetsToday";
   target: number;
   unit?: string;
   daily?: boolean;
@@ -93,8 +93,8 @@ export const DAILY_POOL: MissionDef[] = [
     id: "daily-worry3",
     title: "Daily release",
     blurb: "Yeet 3 worries off your plate today.",
-    metric: "flushes",
-    target: 1,
+    metric: "yeetsToday",
+    target: 3,
     daily: true,
   },
   {
@@ -142,6 +142,7 @@ export type ScoreSnapshot = {
   zen: number;
   calmStreak: number;
   flushes: number;
+  yeetsToday: number;
 };
 
 export function loadMissionProgress(): MissionProgress {
