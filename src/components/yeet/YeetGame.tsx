@@ -66,13 +66,29 @@ type DragState = {
   curY: number;
 };
 
+function safeScoreNum(v: unknown): number {
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) && n >= 0 ? n : 0;
+}
+
+function sanitizeHigh(raw: Partial<HighScore> | null | undefined): HighScore {
+  return {
+    bestYeet: safeScoreNum(raw?.bestYeet),
+    farthest: safeScoreNum(raw?.farthest),
+    chaos: safeScoreNum(raw?.chaos),
+    zen: safeScoreNum(raw?.zen),
+    bestCalmStreak: safeScoreNum(raw?.bestCalmStreak),
+    updatedAt: safeScoreNum(raw?.updatedAt),
+  };
+}
+
 function loadHigh(): HighScore {
   try {
     const raw = localStorage.getItem(HS_KEY);
-    if (!raw) return { bestYeet: 0, farthest: 0, chaos: 0, zen: 0, bestCalmStreak: 0, updatedAt: 0 };
-    return { bestYeet: 0, farthest: 0, chaos: 0, zen: 0, bestCalmStreak: 0, updatedAt: 0, ...JSON.parse(raw) };
+    if (!raw) return sanitizeHigh(null);
+    return sanitizeHigh(JSON.parse(raw) as Partial<HighScore>);
   } catch {
-    return { bestYeet: 0, farthest: 0, chaos: 0, zen: 0, bestCalmStreak: 0, updatedAt: 0 };
+    return sanitizeHigh(null);
   }
 }
 
