@@ -14,6 +14,7 @@ import {
   getDailyMission,
   isDailyDone,
   loadMissionProgress,
+  localDayKey,
   markDailyDone,
   missionProgressValue,
   MISSIONS,
@@ -83,6 +84,15 @@ function saveHigh(s: HighScore) {
   }
 }
 
+
+function rollYeetsTodayIfNeeded(score: ScoreState, dayRef: { current: string }) {
+  const today = localDayKey();
+  if (dayRef.current !== today) {
+    dayRef.current = today;
+    score.yeetsToday = 0;
+  }
+}
+
 function emptyScore(bestYeet = 0): ScoreState {
   return {
     farthest: 0,
@@ -113,6 +123,7 @@ export function YeetGame() {
   const floorBodiesRef = useRef<Matter.Body[]>([]);
   const zonesRef = useRef<Zone[]>([]);
   const scoreRef = useRef<ScoreState>(emptyScore());
+  const yeetsDayRef = useRef<string>(localDayKey());
   const gravityRef = useRef(1);
   const bounceRef = useRef(0.7);
   const powerRef = useRef(1);
@@ -270,6 +281,7 @@ export function YeetGame() {
       setJournal(todayJournal());
       // Keep daily counters + in-progress daily metric (Reset already keeps yeets/flushes).
       // Wiping zen/farthest/calmStreak here was killing daily-zen / daily-far / daily-calm.
+      rollYeetsTodayIfNeeded(s, yeetsDayRef);
       const keep: ScoreState = {
         ...emptyScore(s.bestYeet),
         yeetsToday: s.yeetsToday,
@@ -304,6 +316,7 @@ export function YeetGame() {
   }, []);
 
   const pushScore = useCallback(() => {
+    rollYeetsTodayIfNeeded(scoreRef.current, yeetsDayRef);
     const s = { ...scoreRef.current };
     setScore(s);
     const h = loadHigh();
@@ -394,6 +407,7 @@ export function YeetGame() {
     particlesRef.current = [];
     dragRef.current = null;
     // Keep daily counters: Reset board clears physics, not today's yeet/flush progress.
+    rollYeetsTodayIfNeeded(scoreRef.current, yeetsDayRef);
     scoreRef.current = {
       ...emptyScore(scoreRef.current.bestYeet),
       yeetsToday: scoreRef.current.yeetsToday,
@@ -473,6 +487,7 @@ export function YeetGame() {
       scoreRef.current.lastYeet = yeetScore;
       if (yeetScore > scoreRef.current.bestYeet) scoreRef.current.bestYeet = yeetScore;
       scoreRef.current.chaos += Math.round(strength * 12);
+      rollYeetsTodayIfNeeded(scoreRef.current, yeetsDayRef);
       scoreRef.current.yeetsToday += 1;
       const meta = metaRef.current.get(body.id);
       if (meta) {
