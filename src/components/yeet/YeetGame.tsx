@@ -163,7 +163,9 @@ export function YeetGame() {
   const [sessionLeft, setSessionLeft] = useState<number | null>(null);
   const [breathPhase, setBreathPhase] = useState(0);
 
-  const daily = useMemo(() => getDailyMission(), []);
+  // Recompute when the local calendar day flips (tab left open past midnight).
+  const [dayKey, setDayKey] = useState(() => localDayKey());
+  const daily = useMemo(() => getDailyMission(), [dayKey]);
   const currentMission: MissionDef = MISSIONS[missionProg.missionIndex % MISSIONS.length];
   const showChallenges = settings.showChallenges && settings.mode !== "freeplay";
   const missionCurrent = missionProgressValue(currentMission, score);
@@ -258,6 +260,28 @@ export function YeetGame() {
     return () => window.clearInterval(id);
   }, [started, settings.sessionMinutes]);
 
+  // Idle tabs past local midnight: refresh dayKey so Daily mission rolls over.
+  useEffect(() => {
+    const tick = () => {
+      const today = localDayKey();
+      if (today !== dayKey) {
+        yeetsDayRef.current = today;
+        scoreRef.current.yeetsToday = 0;
+        setDayKey(today);
+        setScore({ ...scoreRef.current });
+      }
+    };
+    const id = window.setInterval(tick, 30_000);
+    const onVis = () => {
+      if (document.visibilityState === "visible") tick();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [dayKey]);
+
   const checkMission = useCallback((s: ScoreState) => {
     if (!settingsRef.current.showChallenges || settingsRef.current.mode === "freeplay") return;
     if (completingRef.current) return;
@@ -316,7 +340,11 @@ export function YeetGame() {
   }, []);
 
   const pushScore = useCallback(() => {
+    const beforeDay = yeetsDayRef.current;
     rollYeetsTodayIfNeeded(scoreRef.current, yeetsDayRef);
+    if (yeetsDayRef.current !== beforeDay || yeetsDayRef.current !== dayKey) {
+      setDayKey(yeetsDayRef.current);
+    }
     const s = { ...scoreRef.current };
     setScore(s);
     const h = loadHigh();
@@ -353,7 +381,7 @@ export function YeetGame() {
       if (record) playSfx("record", 0.85);
     }
     checkMission(s);
-  }, [checkMission]);
+  }, [checkMission, dayKey]);
 
   const spawnBurst = useCallback((x: number, y: number, color: string, n = 14) => {
     const count = settingsRef.current.reducedMotion ? Math.min(6, n) : n;
