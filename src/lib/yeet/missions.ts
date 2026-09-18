@@ -145,11 +145,27 @@ export type ScoreSnapshot = {
   yeetsToday: number;
 };
 
+function sanitizeMissionProgress(raw: unknown): MissionProgress {
+  const p = raw && typeof raw === "object" ? (raw as Partial<MissionProgress>) : {};
+  const idx = Number(p.missionIndex);
+  const completed = Number(p.completed);
+  // Negative missionIndex breaks `MISSIONS[i % n]` in JS (-1 % n === -1 → undefined).
+  const missionIndex =
+    Number.isFinite(idx) && idx >= 0 ? Math.floor(idx) : 0;
+  const safeCompleted =
+    Number.isFinite(completed) && completed >= 0 ? Math.floor(completed) : 0;
+  const out: MissionProgress = { missionIndex, completed: safeCompleted };
+  if (typeof p.dailyDoneDate === "string" && p.dailyDoneDate.trim()) {
+    out.dailyDoneDate = p.dailyDoneDate.trim().slice(0, 32);
+  }
+  return out;
+}
+
 export function loadMissionProgress(): MissionProgress {
   try {
     const raw = localStorage.getItem(MISSION_KEY);
     if (!raw) return { missionIndex: 0, completed: 0 };
-    return JSON.parse(raw) as MissionProgress;
+    return sanitizeMissionProgress(JSON.parse(raw));
   } catch {
     return { missionIndex: 0, completed: 0 };
   }
