@@ -268,11 +268,21 @@ export function YeetGame() {
       missionDoneFlashRef.current = 1;
       bumpJournal({ challenges: 1 });
       setJournal(todayJournal());
-      scoreRef.current = {
+      // Keep daily counters + in-progress daily metric (Reset already keeps yeets/flushes).
+      // Wiping zen/farthest/calmStreak here was killing daily-zen / daily-far / daily-calm.
+      const keep: ScoreState = {
         ...emptyScore(s.bestYeet),
         yeetsToday: s.yeetsToday,
+        flushes: s.flushes,
         bestCalmStreak: s.bestCalmStreak,
       };
+      if (!isDailyDone()) {
+        const daily = getDailyMission();
+        if (daily.metric === "zen") keep.zen = s.zen;
+        else if (daily.metric === "farthest") keep.farthest = s.farthest;
+        else if (daily.metric === "calmStreak") keep.calmStreak = s.calmStreak;
+      }
+      scoreRef.current = keep;
       setScore({ ...scoreRef.current });
       window.setTimeout(() => {
         completingRef.current = false;
