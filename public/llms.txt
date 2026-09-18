@@ -1,0 +1,13 @@
+# YEET
+# https://yeet.grok.me
+
+> Version 1.0.0
+
+YEET is a 2D physics stress-reliever playground for the Timeline.
+Slingshot worries, memes, slime, and glass. Modes: Soft, Zen, Chaos, Freeplay.
+Play is local-first. Scores and settings stay in the browser.
+Not a social network. Not a tracker.
+
+Canonical URL: https://yeet.grok.me
+Source: https://github.com/Pitchfork-and-Torch/yeet-grok-me
+Reviewed: 2026-09-07
