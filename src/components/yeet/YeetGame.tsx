@@ -383,7 +383,13 @@ export function YeetGame() {
     }
     particlesRef.current = [];
     dragRef.current = null;
-    scoreRef.current = emptyScore(scoreRef.current.bestYeet);
+    // Keep daily counters: Reset board clears physics, not today's yeet/flush progress.
+    scoreRef.current = {
+      ...emptyScore(scoreRef.current.bestYeet),
+      yeetsToday: scoreRef.current.yeetsToday,
+      flushes: scoreRef.current.flushes,
+      bestCalmStreak: scoreRef.current.bestCalmStreak,
+    };
     setScore({ ...scoreRef.current });
     setBodyCount(0);
     const { w, h } = sizeRef.current;
