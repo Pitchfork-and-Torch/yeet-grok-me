@@ -260,7 +260,8 @@ export function YeetGame() {
     return () => window.clearInterval(id);
   }, [started, settings.sessionMinutes]);
 
-  // Idle tabs past local midnight: refresh dayKey so Daily mission rolls over.
+  // Idle tabs past local midnight: refresh dayKey so Daily mission rolls over,
+  // and reload today's journal (yesterday's counts must not stick in the HUD).
   useEffect(() => {
     const tick = () => {
       const today = localDayKey();
@@ -269,6 +270,7 @@ export function YeetGame() {
         scoreRef.current.yeetsToday = 0;
         setDayKey(today);
         setScore({ ...scoreRef.current });
+        setJournal(todayJournal());
       }
     };
     const id = window.setInterval(tick, 30_000);
